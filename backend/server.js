@@ -21,6 +21,7 @@ const enrolledStudentsRoutes = require('./routes/enrolledStudents');
 const registeredStudentsRoutes = require('./routes/registeredStudents');
 const teamsRoutes = require('./routes/teams');
 const configRoutes = require('./routes/config');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/faculties', facultiesRoutes);
 app.use('/api/research-topics', researchTopicsRoutes);
@@ -28,6 +29,7 @@ app.use('/api/enrolled-students', enrolledStudentsRoutes);
 app.use('/api/registered-students', registeredStudentsRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

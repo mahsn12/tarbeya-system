@@ -237,6 +237,35 @@ curl -X PUT http://localhost:5000/api/config/team-limits \
 - 404: Resource not found
 - 500: Internal server error
 
+## Admin
+
+- POST `/admin/reset`
+  - Danger: Removes ALL records from the following collections:
+    - Faculties
+    - ResearchTopics
+    - EnrolledStudents
+    - RegisteredStudents
+    - Teams
+  - Preserves the `Config` singleton document.
+  - Response example:
+    ```json
+    {
+      "message": "Database reset complete. Config preserved.",
+      "summary": {
+        "faculties_deleted": 10,
+        "research_topics_deleted": 25,
+        "enrolled_students_deleted": 100,
+        "registered_students_deleted": 80,
+        "teams_deleted": 12
+      },
+      "config_preserved": true
+    }
+    ```
+  - Example:
+    ```bash
+    curl -X POST http://localhost:5000/api/admin/reset
+    ```
+
 ## Notes
 - Unique fields: `faculty_name`, `topic_name`, `team_code`, `enrolledStudents.national_id`, `registeredStudents.national_id`
 - No references are enforced between collections; controllers perform validations based on config only.
