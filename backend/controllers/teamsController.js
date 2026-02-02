@@ -1,4 +1,17 @@
 const Team = require('../models/Team');
+const { getOrCreateConfig } = require('./configController');
+
+// Helper function to validate team member count
+const validateTeamMemberCount = async (memberCount) => {
+  const config = await getOrCreateConfig();
+  if (memberCount < config.min_team_members) {
+    return { valid: false, message: `Team must have at least ${config.min_team_members} member(s)` };
+  }
+  if (memberCount > config.max_team_members) {
+    return { valid: false, message: `Team cannot have more than ${config.max_team_members} member(s)` };
+  }
+  return { valid: true };
+};
 
 // Get all teams
 exports.getAllTeams = async (req, res) => {
@@ -38,15 +51,27 @@ exports.getTeamByCode = async (req, res) => {
 
 // Create new team
 exports.createTeam = async (req, res) => {
-  const team = new Team({
-    team_code: req.body.team_code,
-    faculty_name: req.body.faculty_name,
-    student_names: req.body.student_names || [],
-    national_numbers: req.body.national_numbers || [],
-    research_topics: req.body.research_topics || []
-  });
-
   try {
+    const studentNames = req.body.student_names || [];
+    const nationalNumbers = req.body.national_numbers || [];
+    
+    // Use the larger array length as member count
+    const memberCount = Math.max(studentNames.length, nationalNumbers.length);
+    
+    // Validate team member count against config
+    const validation = await validateTeamMemberCount(memberCount);
+    if (!validation.valid) {
+      return res.status(400).json({ message: validation.message });
+    }
+
+    const team = new Team({
+      team_code: req.body.team_code,
+      faculty_name: req.body.faculty_name,
+      student_names: studentNames,
+      national_numbers: nationalNumbers,
+      research_topics: req.body.research_topics || []
+    });
+
     const newTeam = await team.save();
     res.status(201).json(newTeam);
   } catch (error) {
@@ -60,6 +85,19 @@ exports.updateTeam = async (req, res) => {
     const team = await Team.findById(req.params.id);
     if (!team) {
       return res.status(404).json({ message: 'Team not found' });
+    }
+
+    // Prepare updated values
+    const studentNames = req.body.student_names != null ? req.body.student_names : team.student_names;
+    const nationalNumbers = req.body.national_numbers != null ? req.body.national_numbers : team.national_numbers;
+    
+    // Calculate member count from updated values
+    const memberCount = Math.max(studentNames.length, nationalNumbers.length);
+    
+    // Validate team member count against config
+    const validation = await validateTeamMemberCount(memberCount);
+    if (!validation.valid) {
+      return res.status(400).json({ message: validation.message });
     }
 
     if (req.body.team_code != null) {
