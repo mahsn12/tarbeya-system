@@ -15,7 +15,7 @@ const configSchema = new mongoose.Schema({
   },
   min_team_members: {
     type: Number,
-    default: 1
+    default: 2
   }
 }, {
   timestamps: true

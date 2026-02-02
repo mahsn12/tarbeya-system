@@ -4,6 +4,7 @@
 - Content Type: `application/json`
 - Authentication: None
 - Database: Controlled via `MONGODB_URI`. If no db name provided, MongoDB defaults to `test`.
+- Config: Auto-initialized on server startup if missing (singleton)
 
 ## Health
 - GET `/health`

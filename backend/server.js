@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const Config = require('./models/Config');
 
 // Middleware
 app.use(cors());
@@ -11,7 +12,19 @@ app.use(express.json());
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(async () => {
+    console.log('Connected to MongoDB');
+    // Ensure Config singleton exists on startup
+    try {
+      const existing = await Config.findOne();
+      if (!existing) {
+        await Config.create({});
+        console.log('Initialized Config singleton with defaults');
+      }
+    } catch (initErr) {
+      console.error('Failed to initialize Config singleton:', initErr.message);
+    }
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
