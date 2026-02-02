@@ -53,10 +53,10 @@ exports.getTeamByCode = async (req, res) => {
 exports.createTeam = async (req, res) => {
   try {
     const studentNames = req.body.student_names || [];
-    const nationalNumbers = req.body.national_numbers || [];
+    const nationalIds = req.body.national_ids || [];
     
     // Use the larger array length as member count
-    const memberCount = Math.max(studentNames.length, nationalNumbers.length);
+    const memberCount = Math.max(studentNames.length, nationalIds.length);
     
     // Validate team member count against config
     const validation = await validateTeamMemberCount(memberCount);
@@ -68,7 +68,8 @@ exports.createTeam = async (req, res) => {
       team_code: req.body.team_code,
       faculty_name: req.body.faculty_name,
       student_names: studentNames,
-      national_numbers: nationalNumbers,
+      national_ids: nationalIds,
+      leader_national_id: nationalIds.length > 0 ? nationalIds[0] : undefined,
       research_topics: req.body.research_topics || []
     });
 
@@ -89,10 +90,10 @@ exports.updateTeam = async (req, res) => {
 
     // Prepare updated values
     const studentNames = req.body.student_names != null ? req.body.student_names : team.student_names;
-    const nationalNumbers = req.body.national_numbers != null ? req.body.national_numbers : team.national_numbers;
+    const nationalIds = req.body.national_ids != null ? req.body.national_ids : team.national_ids;
     
     // Calculate member count from updated values
-    const memberCount = Math.max(studentNames.length, nationalNumbers.length);
+    const memberCount = Math.max(studentNames.length, nationalIds.length);
     
     // Validate team member count against config
     const validation = await validateTeamMemberCount(memberCount);
@@ -109,8 +110,10 @@ exports.updateTeam = async (req, res) => {
     if (req.body.student_names != null) {
       team.student_names = req.body.student_names;
     }
-    if (req.body.national_numbers != null) {
-      team.national_numbers = req.body.national_numbers;
+    if (req.body.national_ids != null) {
+      team.national_ids = req.body.national_ids;
+      // Automatically set leader to first id on update when national_ids are provided
+      team.leader_national_id = team.national_ids.length > 0 ? team.national_ids[0] : undefined;
     }
     if (req.body.research_topics != null) {
       team.research_topics = req.body.research_topics;
