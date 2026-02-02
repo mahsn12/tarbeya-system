@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const Config = require('./models/Config');
+const Faculty = require('./models/Faculty');
 
 // Middleware
 app.use(cors());
@@ -23,6 +24,46 @@ mongoose.connect(process.env.MONGODB_URI)
       }
     } catch (initErr) {
       console.error('Failed to initialize Config singleton:', initErr.message);
+    }
+
+    try {
+      const count = await Faculty.countDocuments();
+      if (count === 0) {
+        const initialFaculties = [
+          'كلية البنات',
+          'كلية الهندسة',
+          'كلية الاداب(تعليم مفتوح)',
+          'كلية حقوق (تعليم مفتوح)',
+          'كلية تجارة (تعليم مفتوح)',
+          'كلية زراعة (تعليم مفتوح)',
+          'محول من جامعة اخرى',
+          'الجامعة المصرية للتعلم الالكتروني الاهلية',
+          'كلية الآداب',
+          'كلية الحقوق',
+          'كلية الاثار',
+          'كلية العلوم',
+          'كلية التجارة',
+          'كلية الحاسبات والمعلومات',
+          'كلية الأعلام',
+          'كلية الصيدلة',
+          'كلية طب الاسنان',
+          'كلية الالسن',
+          'كلية الطب',
+          'كلية التمريض',
+          'معهد فني تمريض بالدمرداش',
+          'كلية الزراعة',
+          'الطب البيطري',
+          'كلية التربية',
+          'التربية النوعية',
+          'معهد فني تمريض تخصصي',
+          'الجامعة المصرية للتعلم الالكتروني'
+        ];
+
+        await Faculty.insertMany(initialFaculties.map(name => ({ faculty_name: name })));
+        console.log('Seeded initial faculties');
+      }
+    } catch (seedErr) {
+      console.error('Failed to seed faculties:', seedErr.message);
     }
   })
   .catch(err => console.error('MongoDB connection error:', err));

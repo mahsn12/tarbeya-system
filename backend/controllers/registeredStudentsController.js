@@ -1,4 +1,5 @@
 const RegisteredStudent = require('../models/RegisteredStudent');
+const { updateFacultyStats } = require('./facultiesController');
 
 // Get all registered students
 exports.getAllRegisteredStudents = async (req, res) => {
@@ -62,6 +63,7 @@ exports.createRegisteredStudent = async (req, res) => {
 
   try {
     const newStudent = await student.save();
+    await updateFacultyStats(newStudent.faculty_name);
     res.status(201).json(newStudent);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -76,6 +78,7 @@ exports.updateRegisteredStudent = async (req, res) => {
       return res.status(404).json({ message: 'Registered student not found' });
     }
 
+    const prevFaculty = student.faculty_name;
     if (req.body.national_id != null) {
       student.national_id = req.body.national_id;
     }
@@ -102,6 +105,10 @@ exports.updateRegisteredStudent = async (req, res) => {
     }
 
     const updatedStudent = await student.save();
+    await updateFacultyStats(updatedStudent.faculty_name);
+    if (prevFaculty && prevFaculty !== updatedStudent.faculty_name) {
+      await updateFacultyStats(prevFaculty);
+    }
     res.json(updatedStudent);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -117,6 +124,7 @@ exports.deleteRegisteredStudent = async (req, res) => {
     }
 
     await RegisteredStudent.findByIdAndDelete(req.params.id);
+    await updateFacultyStats(student.faculty_name);
     res.json({ message: 'Registered student deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

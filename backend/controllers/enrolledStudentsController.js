@@ -1,4 +1,5 @@
 const EnrolledStudent = require('../models/EnrolledStudent');
+const { updateFacultyStats } = require('./facultiesController');
 
 // Get all enrolled students
 exports.getAllEnrolledStudents = async (req, res) => {
@@ -49,6 +50,7 @@ exports.createEnrolledStudent = async (req, res) => {
 
   try {
     const newStudent = await student.save();
+    await updateFacultyStats(newStudent.faculty_name);
     res.status(201).json(newStudent);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -63,6 +65,7 @@ exports.updateEnrolledStudent = async (req, res) => {
       return res.status(404).json({ message: 'Enrolled student not found' });
     }
 
+    const prevFaculty = student.faculty_name;
     if (req.body.national_id != null) {
       student.national_id = req.body.national_id;
     }
@@ -83,6 +86,10 @@ exports.updateEnrolledStudent = async (req, res) => {
     }
 
     const updatedStudent = await student.save();
+    await updateFacultyStats(updatedStudent.faculty_name);
+    if (prevFaculty && prevFaculty !== updatedStudent.faculty_name) {
+      await updateFacultyStats(prevFaculty);
+    }
     res.json(updatedStudent);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -98,6 +105,7 @@ exports.deleteEnrolledStudent = async (req, res) => {
     }
 
     await EnrolledStudent.findByIdAndDelete(req.params.id);
+    await updateFacultyStats(student.faculty_name);
     res.json({ message: 'Enrolled student deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,4 +1,31 @@
 const Faculty = require('../models/Faculty');
+const EnrolledStudent = require('../models/EnrolledStudent');
+const RegisteredStudent = require('../models/RegisteredStudent');
+const Team = require('../models/Team');
+
+async function updateFacultyStats(facultyName) {
+  const enrolledIds = await EnrolledStudent.distinct('national_id', { faculty_name: facultyName });
+  const registeredIds = await RegisteredStudent.distinct('national_id', { faculty_name: facultyName });
+  const enrolledCount = enrolledIds.length;
+  const registeredCount = registeredIds.length;
+  const unregisteredCount = enrolledIds.filter(id => !registeredIds.includes(id)).length;
+  const teamsCount = await Team.countDocuments({ faculty_name: facultyName });
+
+  await Faculty.updateOne(
+    { faculty_name: facultyName },
+    {
+      $set: {
+        enrolled_students: enrolledCount,
+        registered_students: registeredCount,
+        unregistered_students: unregisteredCount,
+        unregistered_unenrolled_students: 0,
+        number_of_teams: teamsCount
+      }
+    }
+  );
+}
+
+exports.updateFacultyStats = updateFacultyStats;
 
 // Get all faculties
 exports.getAllFaculties = async (req, res) => {

@@ -1,5 +1,6 @@
 const Team = require('../models/Team');
 const { getOrCreateConfig } = require('./configController');
+const { updateFacultyStats } = require('./facultiesController');
 
 // Helper function to validate team member count
 const validateTeamMemberCount = async (memberCount) => {
@@ -74,6 +75,7 @@ exports.createTeam = async (req, res) => {
     });
 
     const newTeam = await team.save();
+    await updateFacultyStats(newTeam.faculty_name);
     res.status(201).json(newTeam);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -104,6 +106,7 @@ exports.updateTeam = async (req, res) => {
     if (req.body.team_code != null) {
       team.team_code = req.body.team_code;
     }
+    const prevFaculty = team.faculty_name;
     if (req.body.faculty_name != null) {
       team.faculty_name = req.body.faculty_name;
     }
@@ -120,6 +123,10 @@ exports.updateTeam = async (req, res) => {
     }
 
     const updatedTeam = await team.save();
+    await updateFacultyStats(updatedTeam.faculty_name);
+    if (prevFaculty && prevFaculty !== updatedTeam.faculty_name) {
+      await updateFacultyStats(prevFaculty);
+    }
     res.json(updatedTeam);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -135,6 +142,7 @@ exports.deleteTeam = async (req, res) => {
     }
 
     await Team.findByIdAndDelete(req.params.id);
+    await updateFacultyStats(team.faculty_name);
     res.json({ message: 'Team deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
