@@ -1,6 +1,7 @@
 {
   "name": "tarbeya-backend",
   "version": "1.0.0",
+  "private": true,
   "description": "Backend API for Tarbeya application",
   "main": "server.js",
   "scripts": {
@@ -8,10 +9,15 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@google-cloud/vision": "^5.3.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "mongoose": "^8.0.3"
+    "express": "^4.22.1",
+    "fs-extra": "^11.3.3",
+    "googleapis": "^171.2.0",
+    "mongoose": "^7.8.8",
+    "multer": "^1.4.5-lts.1",
+    "pdf-poppler": "^0.2.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

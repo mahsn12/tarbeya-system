@@ -270,3 +270,65 @@ curl -X PUT http://localhost:5000/api/config/team-limits \
 ## Notes
 - Unique fields: `faculty_name`, `topic_name`, `team_code`, `enrolledStudents.national_id`, `registeredStudents.national_id`
 - No references are enforced between collections; controllers perform validations based on config only.
+
+## OCR (Google Drive OAuth Flow)
+
+### Endpoint: `/ocr/upload`
+
+#### Description
+This endpoint allows the frontend to upload a PDF file for OCR extraction using Google Drive's built-in OCR (not Google Cloud Vision). It uses OAuth2 authentication with the user's Google account, matching the behavior of the original Apps Script implementation.
+
+#### Flow Overview
+1. **Initial Request:**
+   - The frontend sends a POST request with a PDF file to `/ocr/upload`.
+   - The request body must include:
+     - `auth` (boolean, required): Set to `true` if the user is authenticated, `false` otherwise.
+     - `code` (string, required if `auth` is `false`): The Google OAuth2 code received after user authentication.
+2. **Token Check:**
+   - If a valid Google OAuth token is present, the backend processes the file and returns the extracted data.
+   - If the token is missing or expired, the backend responds with `{ authUrl: "..." }`.
+3. **Frontend Auth Handling:**
+   - If `authUrl` is returned, the frontend should redirect the user to this URL to complete Google authentication.
+   - After successful auth, the user is redirected back (see below), and the frontend must include the received `code` in the next request to `/ocr/upload`.
+
+#### Request
+**POST** `/ocr/upload`
+
+**Form Data:**
+| Field   | Type   | Description         |
+|---------|--------|--------------------|
+| file    | PDF    | The PDF to process |
+| auth    | bool   | Required. Set to `true` if authenticated, `false` otherwise |
+| code    | string | Required if `auth` is `false`. The OAuth2 code from Google |
+
+#### Response
+| Field      | Type     | Description                                                      |
+|------------|----------|------------------------------------------------------------------|
+| students   | array    | Extracted student data (Apps Script logic, see below)            |
+| authUrl    | string   | (If auth required) URL for Google OAuth2 login                   |
+| error      | string   | (If error) Error message                                         |
+
+#### Auth Flow Details
+- The backend manages Google OAuth2 tokens and will never expose raw auth errors.
+- If the token is expired or missing, the backend always returns an `authUrl` for the frontend to use.
+- The frontend should handle this by redirecting the user to the provided URL, then retrying the upload after auth, including the received `code` in the request body.
+
+#### Redirect URI
+- After Google auth, the user is redirected to the URI configured in Google Cloud Console (e.g., `/ocr/oauth2callback`).
+- The backend completes the token exchange and stores the token for future requests.
+
+#### Parsing Logic
+- The extracted student data matches the original Apps Script logic exactly (see implementation for details).
+
+#### Example Frontend Flow
+1. User uploads PDF via `/ocr/upload` with `auth: false`.
+2. If response contains `authUrl`, redirect user to it.
+3. After Google auth, user is redirected back; frontend receives `code` and retries the upload with `auth: true` and the `code` in the request body.
+4. On success, receive extracted student data.
+
+#### Error Handling
+- The backend will never return raw Google auth errors. If auth fails, only `authUrl` is returned.
+- All other errors are returned in the `error` field.
+
+#### See Also
+- [routes/ocrDriveUnified.js](routes/ocrDriveUnified.js) for implementation details.

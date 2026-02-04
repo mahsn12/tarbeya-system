@@ -1,0 +1,41 @@
+:root{
+  --turquoise:#30cfd0;
+  --light-row:#f0f8ff;
+}
+html,body,#root{height:100%;}
+body{
+  margin:0;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  background:#fafafa;
+  color:#222;
+}
+.app-header{
+  background:var(--turquoise);
+  color:#fff;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.app-header h1{font-size:18px;margin:0}
+.nav a{color:rgba(255,255,255,0.9);margin-left:16px;text-decoration:none;padding:8px;border-radius:6px}
+.nav a.active{background:rgba(255,255,255,0.15)}
+.app-main{padding:18px}
+.grid-container{height:600px;width:100%}
+
+/* AG Grid customizations */
+.ag-theme-alpine .ag-header{background:var(--turquoise);color:#fff}
+.ag-theme-alpine .ag-row:nth-child(odd) .ag-cell{background:var(--light-row)}
+.ag-theme-alpine .ag-cell{font-size:14px}
+.ag-theme-alpine .ag-row.missing-both .ag-cell{background:#ffcccc !important;color:#000}
+
+/* Make the grid feel like Google Sheets */
+.ag-theme-alpine .ag-cell-focus{outline:2px solid rgba(0,0,0,0.08)}
+
+.controls{margin-bottom:12px;display:flex;gap:8px}
+.btn{background:#0aa6b7;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+.btn.secondary{background:#5daed1}
+
+/* small spreadsheet in settings */
+.settings-grid{height:220px;max-width:720px}
