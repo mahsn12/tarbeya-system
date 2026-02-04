@@ -1,42 +1,31 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// Connect to MongoDB
+const MONGO = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tarbeya_system';
+mongoose.connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(()=>console.log('MongoDB connected'))
+  .catch(err=>console.error('MongoDB connection error', err));
 
-// Routes
-const facultiesRoutes = require('./routes/faculties');
-const researchTopicsRoutes = require('./routes/researchTopics');
-const enrolledStudentsRoutes = require('./routes/enrolledStudents');
-const registeredStudentsRoutes = require('./routes/registeredStudents');
-const teamsRoutes = require('./routes/teams');
-const configRoutes = require('./routes/config');
-const adminRoutes = require('./routes/admin');
+// Mount existing API routes
+app.use('/api/ocr', require('./routes/ocr'));
+app.use('/api/faculties', require('./routes/faculties'));
+app.use('/api/research-topics', require('./routes/researchTopics'));
+app.use('/api/enrolled-students', require('./routes/enrolledStudents'));
+app.use('/api/registered-students', require('./routes/registeredStudents'));
+app.use('/api/teams', require('./routes/teams'));
+app.use('/api/config', require('./routes/config'));
+app.use('/api/admin', require('./routes/admin'));
 
-app.use('/api/faculties', facultiesRoutes);
-app.use('/api/research-topics', researchTopicsRoutes);
-app.use('/api/enrolled-students', enrolledStudentsRoutes);
-app.use('/api/registered-students', registeredStudentsRoutes);
-app.use('/api/teams', teamsRoutes);
-app.use('/api/config', configRoutes);
-app.use('/api/admin', adminRoutes);
+// Health check
+app.get('/api/health', (req,res)=>res.json({status:'OK'}));
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, ()=>console.log(`Server running on port ${PORT}`));
