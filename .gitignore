@@ -1,2 +1,4 @@
 backend/node_modules/
 frontend_admin/node_modules/
+backend/uploads/
+backend/.env
