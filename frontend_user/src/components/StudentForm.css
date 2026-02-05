@@ -1,0 +1,280 @@
+.form-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.form-header {
+  background: #fafafa;
+  color: #333;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.form-header h3 {
+  font-size: 1.3rem;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-header p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Message Styles */
+.message {
+  padding: 15px 20px;
+  margin: 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Form Sections */
+form {
+  padding: 20px;
+}
+
+.form-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.form-section h4 {
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  font-weight: 600;
+}
+
+/* Grid Layouts */
+.names-grid,
+.identity-grid,
+.academic-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.names-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.identity-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.academic-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Full Width Field */
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-group.full-width input {
+  font-size: 1rem;
+  padding: 12px;
+}
+
+/* Form Group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Validation States */
+.form-group input.valid,
+.form-group select.valid {
+  border-color: #28a745;
+}
+
+.form-group input.valid:focus,
+.form-group select.valid:focus {
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+}
+
+.form-group input.invalid,
+.form-group select.invalid {
+  border-color: #dc3545;
+}
+
+.form-group input.invalid:focus,
+.form-group select.invalid:focus {
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+/* Error and Success Text */
+.error-text {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.error-text::before {
+  content: '⚠';
+}
+
+.success-text {
+  color: #28a745;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.hint-text {
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 15px center;
+  padding-left: 40px;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.submit-btn,
+.reset-btn {
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn {
+  background: #333;
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #555;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.reset-btn {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.reset-btn:hover {
+  background: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .names-grid,
+  .identity-grid,
+  .academic-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-btn,
+  .reset-btn {
+    width: 100%;
+  }
+
+  form {
+    padding: 15px;
+  }
+
+  .form-section {
+    padding: 15px;
+  }
+}

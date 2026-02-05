@@ -1,0 +1,198 @@
+.registration-closed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 500px;
+}
+
+.registration-closed-card {
+  background: white;
+  border-radius: 12px;
+  padding: 50px 40px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.closed-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  border-radius: 50%;
+  margin: 0 auto 30px;
+  color: white;
+}
+
+.closed-icon svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.registration-closed-card h2 {
+  color: #333;
+  font-size: 2rem;
+  margin: 0 0 25px;
+  font-weight: 700;
+}
+
+.closed-message {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 25px;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.closed-message p {
+  color: #856404;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.closed-message p:first-child {
+  font-weight: 600;
+  font-size: 1.15rem;
+}
+
+.closed-info {
+  margin: 30px 0;
+}
+
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: #e7f3ff;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: right;
+}
+
+.info-box svg {
+  flex-shrink: 0;
+  color: #2196f3;
+  margin-top: 2px;
+}
+
+.info-box strong {
+  color: #1976d2;
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.info-box p {
+  color: #0d47a1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.closed-actions {
+  margin: 35px 0 20px;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+}
+
+.contact-info {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.contact-info p {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .registration-closed-card {
+    padding: 35px 25px;
+  }
+
+  .closed-icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .closed-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .registration-closed-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .closed-message {
+    padding: 20px;
+  }
+
+  .closed-message p {
+    font-size: 1rem;
+  }
+
+  .info-box {
+    padding: 15px;
+  }
+
+  .back-btn {
+    width: 100%;
+    padding: 14px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-closed-card {
+    padding: 30px 20px;
+  }
+
+  .closed-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .closed-icon svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .registration-closed-card h2 {
+    font-size: 1.4rem;
+  }
+
+  .closed-message p {
+    font-size: 0.95rem;
+  }
+}

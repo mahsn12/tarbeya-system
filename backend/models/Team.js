@@ -30,6 +30,8 @@ const teamSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+// Ensure each national_id appears in only one Team document
+teamSchema.index({ national_ids: 1 }, { unique: true, sparse: true });
 
 // Automatically set leader_national_id to the first national_id if not explicitly provided
 teamSchema.pre('save', function (next) {
