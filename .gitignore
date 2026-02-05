@@ -1,4 +1,5 @@
 backend/node_modules/
-frontend_admin/node_modules/
+Frontend/node_modules/
+frontend_user/node_modules/
 backend/uploads/
 backend/.env
