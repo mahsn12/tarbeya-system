@@ -1,0 +1,244 @@
+.teams-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.teams-content {
+  background: white;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 10px 10px 0 0;
+}
+
+.teams-header h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.teams-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teams-close-btn:hover {
+  color: #333;
+}
+
+.teams-message {
+  padding: 14px 24px;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.teams-message.success {
+  background: #d4edda;
+  color: #155724;
+  border-bottom: 1px solid #c3e6cb;
+}
+
+.teams-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border-bottom: 1px solid #f5c6cb;
+}
+
+.team-size-info {
+  padding: 12px 24px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #0d47a1;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-left: 4px solid #2196f3;
+  margin: 0;
+  font-weight: 600;
+}
+
+form {
+  padding: 24px;
+}
+
+.teams-form-group {
+  margin-bottom: 16px;
+}
+
+.teams-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.teams-form-group label.required::after {
+  content: " *";
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.college-display {
+  padding: 12px 14px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  font-family: 'Cairo', sans-serif;
+}
+
+.teams-form-group input,
+.teams-form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'Cairo', sans-serif;
+  transition: border-color 0.2s;
+}
+
+.teams-form-group input:focus,
+.teams-form-group select:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.teams-form-group input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.team-members-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+}
+
+.team-members-section h4 {
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.team-note {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-right: 3px solid #333;
+}
+
+.teams-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.teams-submit-btn,
+.teams-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.teams-submit-btn {
+  background: #333;
+  color: white;
+}
+
+.teams-submit-btn:hover:not(:disabled) {
+  background: #555;
+}
+
+.teams-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.teams-cancel-btn {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.teams-cancel-btn:hover {
+  background: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .teams-content {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  form {
+    padding: 20px;
+  }
+
+  .teams-header {
+    padding: 15px 20px;
+  }
+}
