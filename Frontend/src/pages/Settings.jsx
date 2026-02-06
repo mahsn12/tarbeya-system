@@ -1,17 +1,6 @@
 import React, { useMemo, useState, useRef } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 
-const CheckboxRenderer = (props) => {
-  const checked = !!props.value
-  return (
-    <input
-      type="checkbox"
-      checked={checked}
-      onChange={(e)=>props.node.setDataValue(props.colDef.field, e.target.checked)}
-    />
-  )
-}
-
 export default function Settings(){
 
   const initial = [
@@ -29,117 +18,116 @@ export default function Settings(){
   // ================= API TOGGLE =================
 
   const toggleRegistration = async (newValue) => {
-    try {
-      const res = await fetch('http://localhost:4000/api/config/registration-status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          registration_status: newValue
-        })
-      })
 
-      if (!res.ok) throw new Error('API failed')
+    const res = await fetch('http://localhost:4000/api/config/registration-status',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({registration_status:newValue})
+    });
 
-      const data = await res.json()
-      return data.registration_status
-
-    } catch (err) {
-      alert('فشل تحديث حالة التسجيل')
-      throw err
-    }
-  }
+    const data = await res.json();
+    return data.registration_status;
+  };
 
   // ================= GRID =================
 
   const columnDefs = useMemo(()=>[
-    {field:'key',headerName:'الوصف',flex:1,editable:false},
-    {field:'value',headerName:'القيمة',width:160,editable:true,cellRenderer:params=>{
+    {field:'key',headerName:'الوصف',flex:1},
+    {field:'value',headerName:'القيمة',width:160,cellRenderer:params=>{
 
       if(params.data.type==='bool'){
         return (
           <input
             type="checkbox"
             checked={!!params.value}
-            onChange={async (e)=>{
+            onChange={async e=>{
 
-              const newVal = e.target.checked
-              const oldVal = params.value
+              const newVal=e.target.checked;
+              const oldVal=params.value;
 
-              params.node.setDataValue('value', newVal)
+              params.node.setDataValue('value',newVal);
 
-              if(params.data.key === 'هل سيقوم الطالب بالتسجيل؟'){
+              if(params.data.key==='هل سيقوم الطالب بالتسجيل؟'){
                 try{
-                  const saved = await toggleRegistration(newVal)
-                  params.node.setDataValue('value', saved)
+                  const saved=await toggleRegistration(newVal);
+                  params.node.setDataValue('value',saved);
                 }catch{
-                  params.node.setDataValue('value', oldVal)
+                  params.node.setDataValue('value',oldVal);
                 }
               }
             }}
           />
-        )
+        );
       }
 
       return (
         <input
           style={{width:'100%'}}
           value={params.value}
-          onChange={(e)=>params.node.setDataValue('value', e.target.value)}
+          onChange={e=>params.node.setDataValue('value',e.target.value)}
         />
-      )
+      );
     }}
-  ],[])
+  ],[]);
 
   const addFaculty = ()=>{
-    const name = prompt('أدخل اسم الكلية الجديدة:')
-    if(name) setFaculties(s=>[...s,name])
-  }
+    const name=prompt('أدخل اسم الكلية الجديدة:');
+    if(name) setFaculties(s=>[...s,name]);
+  };
 
   const addResearch = ()=>{
-    const name = prompt('أدخل عنوان البحث:')
-    if(name) setResearch(s=>[...s,name])
-  }
+    const name=prompt('أدخل عنوان البحث:');
+    if(name) setResearch(s=>[...s,name]);
+  };
 
-  const addPDF = async ()=>{
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'application/pdf'
+  // ================= PDF =================
 
-    input.onchange = async (e)=>{
-      const file = e.target.files[0]
-      if(!file) return
+const addPDF = ()=>{
 
-      try{
-        const form = new FormData()
-        form.append('pdf', file)
+  const input=document.createElement("input");
+  input.type="file";
+  input.accept="application/pdf";
 
-        const res = await fetch('http://localhost:4000/api/ocr/upload', {
-          method: 'POST',
-          body: form
-        })
+  input.onchange=async e=>{
 
-        const data = await res.json()
+    const file=e.target.files[0];
+    if(!file) return;
 
-        if(data.success){
-          alert(`تم الرفع. عدد السجلات المضافة: ${data.inserted}`)
-        } else {
-          alert('فشل المعالجة: ' + (data.error || 'خطأ غير معروف'))
-        }
+    // Save PDF temporarily
+    sessionStorage.setItem("pending_pdf","1");
 
-      }catch(err){
-        console.error(err)
-        alert('خطأ أثناء الرفع: ' + err.message)
+    const form=new FormData();
+    form.append("pdf",file);
+
+    try{
+
+      const res=await fetch("http://localhost:4000/api/ocr/upload",{
+        method:"POST",
+        body:form
+      });
+
+      const data=await res.json();
+
+      if(data.requiresAuth){
+
+        alert("You will be redirected to Google.\nAfter login copy CODE then open /oauth");
+
+        // FULL redirect (not popup)
+        window.location.href = data.authUrl;
+        return;
       }
+
+      alert(`Inserted ${data.inserted}`);
+
+    }catch(e){
+      alert("Backend unreachable");
+      console.error(e);
     }
+  };
 
-    input.click()
-  }
+  input.click();
+};
 
-  const distribute = ()=>{
-    alert('تم تنفيذ التوزيع (محاكاة)')
-  }
 
   return (
     <div>
@@ -148,7 +136,6 @@ export default function Settings(){
         <button className="btn" onClick={addFaculty}>إضافة كلية جديدة</button>
         <button className="btn" onClick={addResearch}>إضافة بحث جديد</button>
         <button className="btn" onClick={addPDF}>إضافة ملف PDF</button>
-        <button className="btn secondary" onClick={distribute}>توزيع</button>
       </div>
 
       <div className="settings-grid ag-theme-alpine">
@@ -157,18 +144,18 @@ export default function Settings(){
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={{resizable:true}}
-          onCellValueChanged={(e)=>setRows(gridRef.current.api.getRenderedNodes().map(n=>n.data))}
+          onCellValueChanged={()=>setRows(gridRef.current.api.getRenderedNodes().map(n=>n.data))}
         />
       </div>
 
       <div style={{marginTop:16}}>
-        <strong>الكليات الحالية: </strong>{faculties.join(' ، ')}
+        <strong>الكليات الحالية:</strong> {faculties.join(' ، ')}
       </div>
 
       <div style={{marginTop:8}}>
-        <strong>الأبحاث الحالية: </strong>{research.join(' ، ')}
+        <strong>الأبحاث الحالية:</strong> {research.join(' ، ')}
       </div>
 
     </div>
-  )
+  );
 }

@@ -5,6 +5,7 @@ import Settings from './pages/Settings'
 import Teams from './pages/Teams'
 import Military from './pages/Military'
 import Research from './pages/Research'
+import OAuth from './pages/OAuth'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 
@@ -21,6 +22,7 @@ export default function App(){
           <NavLink to="/research" className={({isActive})=> isActive? 'active' : ''}>الأبحاث</NavLink>
         </nav>
       </header>
+
       <main className="app-main">
         <Routes>
           <Route path="/" element={<Students/>} />
@@ -28,6 +30,9 @@ export default function App(){
           <Route path="/teams" element={<Teams/>} />
           <Route path="/military" element={<Military/>} />
           <Route path="/research" element={<Research/>} />
+
+          {/* OAuth redirect handler */}
+          <Route path="/oauth" element={<OAuth/>} />
         </Routes>
       </main>
     </div>
