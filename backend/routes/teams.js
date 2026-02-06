@@ -8,9 +8,6 @@ router.get('/', teamsController.getAllTeams);
 // GET team by team code
 router.get('/code/:teamCode', teamsController.getTeamByCode);
 
-// GET team by member national id
-router.get('/member/:nationalId', teamsController.getTeamByMember);
-
 // GET single team by ID
 router.get('/:id', teamsController.getTeamById);
 

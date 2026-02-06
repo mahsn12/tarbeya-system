@@ -9,7 +9,6 @@ const Config = require('../models/Config');
 exports.resetDatabase = async (req, res) => {
   try {
     const results = await Promise.all([
-      Faculty.deleteMany({}),
       ResearchTopic.deleteMany({}),
       EnrolledStudent.deleteMany({}),
       RegisteredStudent.deleteMany({}),
@@ -18,7 +17,6 @@ exports.resetDatabase = async (req, res) => {
     ]);
 
     const summary = {
-      faculties_deleted: results[0].deletedCount || 0,
       research_topics_deleted: results[1].deletedCount || 0,
       enrolled_students_deleted: results[2].deletedCount || 0,
       registered_students_deleted: results[3].deletedCount || 0,
@@ -28,7 +26,7 @@ exports.resetDatabase = async (req, res) => {
     const config = await Config.findOne();
 
     res.json({
-      message: 'Database reset complete. Config preserved.',
+      message: 'Database reset complete. Config and Faculties preserved.',
       summary,
       config_preserved: !!config,
     });

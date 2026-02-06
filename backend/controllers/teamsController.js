@@ -50,20 +50,6 @@ exports.getTeamByCode = async (req, res) => {
   }
 };
 
-// Get team by member national id
-exports.getTeamByMember = async (req, res) => {
-  try {
-    const nationalId = Number(req.params.nationalId);
-    const team = await Team.findOne({ national_ids: nationalId });
-    if (!team) {
-      return res.status(404).json({ message: 'Team not found for this member' });
-    }
-    res.json(team);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // Create new team
 exports.createTeam = async (req, res) => {
   try {
@@ -77,15 +63,6 @@ exports.createTeam = async (req, res) => {
     const validation = await validateTeamMemberCount(memberCount);
     if (!validation.valid) {
       return res.status(400).json({ message: validation.message });
-    }
-
-    // Check for conflicting membership: any of these nationalIds already belong to another team
-    if (nationalIds.length > 0) {
-      const conflict = await Team.findOne({ national_ids: { $in: nationalIds } });
-      if (conflict) {
-        const conflictedIds = conflict.national_ids.filter(n => nationalIds.map(String).includes(String(n)));
-        return res.status(400).json({ message: 'Some members already belong to another team', conflictedIds, existingTeamCode: conflict.team_code });
-      }
     }
 
     const team = new Team({
@@ -124,16 +101,6 @@ exports.updateTeam = async (req, res) => {
     const validation = await validateTeamMemberCount(memberCount);
     if (!validation.valid) {
       return res.status(400).json({ message: validation.message });
-    }
-
-    // If national_ids are being changed, ensure none of the new IDs belong to a different team
-    if (req.body.national_ids != null) {
-      const newIds = req.body.national_ids || [];
-      const conflict = await Team.findOne({ national_ids: { $in: newIds }, _id: { $ne: team._id } });
-      if (conflict) {
-        const conflictedIds = conflict.national_ids.filter(n => newIds.map(String).includes(String(n)));
-        return res.status(400).json({ message: 'Some members already belong to another team', conflictedIds, existingTeamCode: conflict.team_code });
-      }
     }
 
     if (req.body.team_code != null) {

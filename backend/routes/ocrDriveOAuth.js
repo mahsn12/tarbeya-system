@@ -125,7 +125,11 @@ async function getOAuth2Client() {
   if (!redirect_uris || !Array.isArray(redirect_uris) || !redirect_uris[0]) {
     throw new Error('No redirect_uris found in client_secret.json. Please download a valid OAuth2 client credentials file from Google Cloud Console.');
   }
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+const oAuth2Client = new google.auth.OAuth2(
+  client_id,
+  client_secret,
+  "http://localhost:5173/oauth"
+);
   // Try to load token
   try {
     const token = await fs.readFile(TOKEN_PATH);
