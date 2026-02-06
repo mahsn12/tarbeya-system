@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react'
+import React, { useMemo, useState, useRef, useEffect } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 
 export default function Settings(){
@@ -11,9 +11,45 @@ export default function Settings(){
   ]
 
   const [rows,setRows] = useState(initial)
-  const [faculties,setFaculties] = useState(['كلية الهندسة','كلية الطب','كلية الآداب'])
-  const [research,setResearch] = useState(['بحث 1','بحث 2','بحث 3'])
+  const [faculties,setFaculties] = useState([])
+  const [research,setResearch] = useState([])
   const gridRef = useRef()
+
+
+
+  useEffect(()=>{
+    let mounted = true;
+
+    const loadData = async ()=>{
+      try{
+        const [facRes,researchRes] = await Promise.all([
+          fetch('http://localhost:4000/api/faculties'),
+          fetch('http://localhost:4000/api/research-topics')
+        ]);
+
+        if(!facRes.ok || !researchRes.ok){
+          throw new Error('Failed to fetch settings data');
+        }
+
+        const [facData,researchData] = await Promise.all([
+          facRes.json(),
+          researchRes.json()
+        ]);
+
+        if(!mounted) return;
+        setFaculties(facData.map(item=>item.faculty_name));
+        setResearch(researchData.map(item=>item.topic_name));
+      }catch(e){
+        console.error(e);
+      }
+    };
+
+    loadData();
+
+    return ()=>{
+      mounted = false;
+    };
+  },[]);
 
   // ================= API TOGGLE =================
 
@@ -70,14 +106,50 @@ export default function Settings(){
     }}
   ],[]);
 
-  const addFaculty = ()=>{
+  const addFaculty = async ()=>{
     const name=prompt('أدخل اسم الكلية الجديدة:');
-    if(name) setFaculties(s=>[...s,name]);
+    if(!name) return;
+
+    try{
+      const res = await fetch('http://localhost:4000/api/faculties',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({faculty_name:name})
+      });
+
+      if(!res.ok){
+        throw new Error('Add faculty failed');
+      }
+
+      const created = await res.json();
+      setFaculties(s=>[...s,created.faculty_name]);
+    }catch(e){
+      alert('فشل إضافة الكلية');
+      console.error(e);
+    }
   };
 
-  const addResearch = ()=>{
+  const addResearch = async ()=>{
     const name=prompt('أدخل عنوان البحث:');
-    if(name) setResearch(s=>[...s,name]);
+    if(!name) return;
+
+    try{
+      const res = await fetch('http://localhost:4000/api/research-topics',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({topic_name:name})
+      });
+
+      if(!res.ok){
+        throw new Error('Add research failed');
+      }
+
+      const created = await res.json();
+      setResearch(s=>[...s,created.topic_name]);
+    }catch(e){
+      alert('فشل إضافة البحث');
+      console.error(e);
+    }
   };
 
   // ================= PDF =================
@@ -128,6 +200,26 @@ const addPDF = ()=>{
   input.click();
 };
 
+const resetTrainingCycle = async ()=>{
+  const confirmed = window.confirm('هل أنت متأكد من إنهاء الدورة التدريبية؟');
+  if(!confirmed) return;
+
+  try{
+    const res = await fetch('http://localhost:4000/api/admin/reset',{
+      method:'POST'
+    });
+
+    if(!res.ok){
+      throw new Error('Reset failed');
+    }
+
+    alert('تم إنهاء الدورة التدريبية بنجاح');
+  }catch(e){
+    alert('فشل إنهاء الدورة التدريبية');
+    console.error(e);
+  }
+};
+
 
   return (
     <div>
@@ -136,6 +228,7 @@ const addPDF = ()=>{
         <button className="btn" onClick={addFaculty}>إضافة كلية جديدة</button>
         <button className="btn" onClick={addResearch}>إضافة بحث جديد</button>
         <button className="btn" onClick={addPDF}>إضافة ملف PDF</button>
+        <button className="btn" onClick={resetTrainingCycle}>انهاء الدورة التدريبيه</button>
       </div>
 
       <div className="settings-grid ag-theme-alpine">

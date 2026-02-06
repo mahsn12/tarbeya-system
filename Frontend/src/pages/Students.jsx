@@ -68,7 +68,7 @@ export default function Students(){
   return (
     <div>
       <div className="controls">
-        <button className="btn" onClick={()=>{/* create via API instead */}}>إضافة صف</button>
+        <button className="btn" onClick={()=>setRowData(prev=>[{name:'',nid:'',serial:'',mobile:'',faculty:'',year:'',research:'',teamCode:'',secret:false,regDate:''},...prev])}>إضافة صف</button>
       </div>
       {loading && <div>جارٍ التحميل...</div>}
       {error && <div style={{color:'red'}}>خطأ: {error}</div>}
