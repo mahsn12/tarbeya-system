@@ -35,7 +35,7 @@ export default function Teams(){
   return (
     <div>
       <div className="controls">
-        <button className="btn" onClick={()=>{/* create via API */}}>إضافة فريق</button>
+        <button className="btn" onClick={()=>setRowData(prev=>[...prev,{teamCode:'',faculty:'',members:'',nid:'',researches:''}])}>إضافة فريق</button>
       </div>
       {loading && <div>جارٍ التحميل...</div>}
       {error && <div style={{color:'red'}}>خطأ: {error}</div>}
