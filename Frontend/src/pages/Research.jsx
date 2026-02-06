@@ -22,7 +22,7 @@ export default function Research(){
   return (
     <div>
       <div className="controls">
-        <button className="btn" onClick={()=>{/* create via API */}}>إضافة بحث</button>
+        <button className="btn" onClick={()=>setRowData(prev=>[...prev,{title:''}])}>إضافة بحث</button>
       </div>
       {loading && <div>جارٍ التحميل...</div>}
       {error && <div style={{color:'red'}}>خطأ: {error}</div>}

@@ -14,14 +14,22 @@ body{
   background:var(--turquoise);
   color:#fff;
   padding:14px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
 }
 .app-header h1{font-size:18px;margin:0}
+.nav{
+  position:fixed;
+  bottom:0;
+  right:0;
+  left:0;
+  background:var(--turquoise);
+  padding:10px 20px;
+  display:flex;
+  justify-content:center;
+  z-index:20;
+}
 .nav a{color:rgba(255,255,255,0.9);margin-left:16px;text-decoration:none;padding:8px;border-radius:6px}
 .nav a.active{background:rgba(255,255,255,0.15)}
-.app-main{padding:18px}
+.app-main{padding:18px 18px 74px}
 .grid-container{height:600px;width:100%}
 
 /* AG Grid customizations */
