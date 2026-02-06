@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // ================= MONGODB =================
 
-const MONGO = process.env.MONGO_URI;
+const MONGO = process.env.MONGO_URI || process.env.MONGODB_URI;
 
-mongoose.connect(MONGO)
+mongoose.connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(async () => {
 
   console.log('MongoDB connected');
