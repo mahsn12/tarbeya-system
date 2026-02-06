@@ -5,7 +5,7 @@ const path = require("path");
 const { google } = require("googleapis");
 
 const TOKEN_PATH = path.resolve(__dirname, "../token.json");
-const CREDS = require("../client_secret.json");
+const CREDS = JSON.parse(process.env.GOOGLE_CLIENT_SECRET_JSON);
 
 const CLIENT_ID = (CREDS.installed || CREDS.web).client_id;
 const CLIENT_SECRET = (CREDS.installed || CREDS.web).client_secret;

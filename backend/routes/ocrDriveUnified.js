@@ -16,7 +16,7 @@ const upload = multer({
   }
 });
 
-const CREDS = require('../client_secret.json');
+const CREDS = JSON.parse(process.env.GOOGLE_CLIENT_SECRET_JSON);
 const TOKEN_PATH = path.resolve(__dirname,'../token.json');
 
 const CLIENT_ID = (CREDS.installed||CREDS.web).client_id;

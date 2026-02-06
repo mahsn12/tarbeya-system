@@ -119,8 +119,7 @@ const TOKEN_PATH = path.resolve(__dirname, '../token.json');
 const CREDENTIALS_PATH = path.resolve(__dirname, '../client_secret.json');
 
 async function getOAuth2Client() {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const credentials = JSON.parse(content);
+  const credentials = JSON.parse(process.env.GOOGLE_CLIENT_SECRET_JSON);
   const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
   if (!redirect_uris || !Array.isArray(redirect_uris) || !redirect_uris[0]) {
     throw new Error('No redirect_uris found in client_secret.json. Please download a valid OAuth2 client credentials file from Google Cloud Console.');
