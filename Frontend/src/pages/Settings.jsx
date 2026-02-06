@@ -128,6 +128,26 @@ const addPDF = ()=>{
   input.click();
 };
 
+const resetTrainingCycle = async ()=>{
+  const confirmed = window.confirm('هل أنت متأكد من إنهاء الدورة التدريبية؟');
+  if(!confirmed) return;
+
+  try{
+    const res = await fetch('http://localhost:4000/api/admin/reset',{
+      method:'POST'
+    });
+
+    if(!res.ok){
+      throw new Error('Reset failed');
+    }
+
+    alert('تم إنهاء الدورة التدريبية بنجاح');
+  }catch(e){
+    alert('فشل إنهاء الدورة التدريبية');
+    console.error(e);
+  }
+};
+
 
   return (
     <div>
@@ -136,6 +156,7 @@ const addPDF = ()=>{
         <button className="btn" onClick={addFaculty}>إضافة كلية جديدة</button>
         <button className="btn" onClick={addResearch}>إضافة بحث جديد</button>
         <button className="btn" onClick={addPDF}>إضافة ملف PDF</button>
+        <button className="btn" onClick={resetTrainingCycle}>انهاء الدورة التدريبيه</button>
       </div>
 
       <div className="settings-grid ag-theme-alpine">
