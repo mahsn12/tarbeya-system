@@ -66,7 +66,7 @@ export default function Military(){
   return (
     <div>
       <div className="controls">
-        <button className="btn" onClick={()=>{/* keep add disabled when data comes from DB */}}>إضافة صف</button>
+        <button className="btn" onClick={()=>setRowData(prev=>[...prev,{_id:'',serial:'',name:'',nid:'',faculty:'',registered:false,submitted:false}])}>إضافة صف</button>
       </div>
       {loading && <div>جارٍ التحميل...</div>}
       {error && <div style={{color:'red'}}>خطأ: {error}</div>}
