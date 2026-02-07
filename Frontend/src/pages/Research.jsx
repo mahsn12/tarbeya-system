@@ -63,6 +63,7 @@ export default function Research(){
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
+          enableRtl={true}
           defaultColDef={{editable:true,filter:true,resizable:true}}
           enableRangeSelection={true}
           onCellValueChanged={async (params) => {
