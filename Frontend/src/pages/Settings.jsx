@@ -12,7 +12,7 @@ export default function Settings(){
   ]
 
   const [rows,setRows] = useState(initial)
-  const [faculties,setFaculties] = useState(['كلية الهندسة','كلية الطب','كلية الآداب'])
+  const [faculties,setFaculties] = useState([])
   const [research,setResearch] = useState([])
   const gridRef = useRef()
 
@@ -29,6 +29,23 @@ export default function Settings(){
       .then(data=>{
         if(mounted){
           setResearch(data.map(topic=>topic.topic_name))
+        }
+      })
+      .catch(error=>{
+        console.error(error)
+      })
+
+
+    fetch(`${API_BASE}/faculties`)
+      .then(res=>{
+        if(!res.ok){
+          throw new Error('Failed to load faculties')
+        }
+        return res.json()
+      })
+      .then(data=>{
+        if(mounted){
+          setFaculties(data.map(faculty=>faculty.faculty_name))
         }
       })
       .catch(error=>{
@@ -95,9 +112,29 @@ export default function Settings(){
     }}
   ],[]);
 
-  const addFaculty = ()=>{
-    const name=prompt('أدخل اسم الكلية الجديدة:');
-    if(name) setFaculties(s=>[...s,name]);
+  const addFaculty = async ()=>{
+    const name=prompt('أدخل اسم الكلية الجديدة:')?.trim();
+    if(!name) return;
+
+    try{
+      const response = await fetch(`${API_BASE}/faculties`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({faculty_name:name})
+      });
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error(data.message || 'فشل إضافة الكلية');
+      }
+
+      setFaculties(prev=>[...prev,data.faculty_name]);
+      alert('تمت إضافة الكلية بنجاح');
+    }catch(error){
+      alert(error.message || 'فشل إضافة الكلية');
+      console.error(error);
+    }
   };
 
   const addResearch = async ()=>{

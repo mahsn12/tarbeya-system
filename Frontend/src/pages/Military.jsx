@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 
+const API_BASE = 'http://localhost:4000/api/enrolled-students'
+
 const CheckboxRenderer = (props) => {
   const checked = !!props.value
   return (
@@ -20,11 +22,11 @@ export default function Military(){
   useEffect(()=>{
     let mounted = true
     setLoading(true)
-    fetch('http://localhost:4000/api/enrolled-students')
+    fetch(API_BASE)
       .then(r=>r.json())
       .then(data=>{ if(mounted){
         const rows = data.map(d=>({
-          _id: d._id || d.id,
+          _id: d._id,
           serial: d.sequence_number,
           name: d.student_name,
           nid: d.national_id,
@@ -35,7 +37,64 @@ export default function Military(){
         setRowData(rows); setLoading(false)
       } })
       .catch(err=>{ if(mounted){ setError(err.message||String(err)); setLoading(false)} })
-    return ()=> mounted = false
+    return ()=> { mounted = false }
+  },[])
+
+  const saveRow = useCallback(async (id, row) => {
+    const payload = {
+      sequence_number: Number(row.serial),
+      student_name: row.name,
+      national_id: Number(row.nid),
+      faculty_name: row.faculty,
+      registered_research: !!row.registered,
+      finished_research: !!row.submitted
+    }
+
+    const response = await fetch(`${API_BASE}/${id}`,{
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    })
+
+    if (!response.ok) {
+      throw new Error('تعذر تحديث بيانات الطالب')
+    }
+  },[])
+
+  const addNewStudent = useCallback(async () => {
+    setError(null)
+    const stamp = Date.now()
+    const payload = {
+      sequence_number: stamp % 1000000,
+      student_name: `طالب دورة ${stamp}`,
+      national_id: stamp,
+      faculty_name: 'غير محدد',
+      registered_research: false,
+      finished_research: false
+    }
+
+    try {
+      const response = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!response.ok) {
+        throw new Error('تعذر إضافة الطالب')
+      }
+      const created = await response.json()
+      setRowData(prev => [...prev, {
+        _id: created._id,
+        serial: created.sequence_number,
+        name: created.student_name,
+        nid: created.national_id,
+        faculty: created.faculty_name,
+        registered: !!created.registered_research,
+        submitted: !!created.finished_research
+      }])
+    } catch (err) {
+      setError(err.message || String(err))
+    }
   },[])
 
   const columnDefs = useMemo(()=>[
@@ -49,24 +108,10 @@ export default function Military(){
 
   const defaultColDef = useMemo(()=>({editable:true,filter:true,sortable:true,resizable:true}),[])
 
-  const rowClassRules = {
-    'missing-both': params => !params.data.registered_research && !params.data.finished_research
-  }
-
-  const updateStudent = useCallback(async (id, patch) => {
-    try{
-      await fetch(`http://localhost:4000/api/enrolled-students/${id}`,{
-        method: 'PUT',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify(patch)
-      })
-    }catch(err){ console.error('Update error', err) }
-  },[])
-
   return (
     <div>
       <div className="controls">
-        <button className="btn" onClick={()=>setRowData(prev=>[...prev,{_id:'',serial:'',name:'',nid:'',faculty:'',registered:false,submitted:false}])}>إضافة صف</button>
+        <button className="btn" onClick={addNewStudent}>إضافة صف</button>
       </div>
       {loading && <div>جارٍ التحميل...</div>}
       {error && <div style={{color:'red'}}>خطأ: {error}</div>}
@@ -77,16 +122,13 @@ export default function Military(){
           defaultColDef={defaultColDef}
           enableRangeSelection={true}
           rowSelection={'multiple'}
-          rowClassRules={rowClassRules}
-          onCellValueChanged={(params)=>{
-            const id = params.data._id || params.data.id || (params.data._doc && params.data._doc._id)
+          onCellValueChanged={async (params)=>{
+            const id = params.data?._id
             if(!id) return
-            // map checkbox fields
-            if(params.colDef.field === 'registered'){
-              updateStudent(id, { registered_research: params.newValue })
-            }
-            if(params.colDef.field === 'submitted'){
-              updateStudent(id, { finished_research: params.newValue })
+            try {
+              await saveRow(id, params.data)
+            } catch (err) {
+              setError(err.message || String(err))
             }
           }}
         />
