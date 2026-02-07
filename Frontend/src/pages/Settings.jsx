@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 
 export default function Settings(){
+  const API_BASE = 'http://localhost:4000/api'
 
   const initial = [
     {key:'هل سيقوم الطالب بالتسجيل؟',value:false,type:'bool'},
@@ -12,8 +13,32 @@ export default function Settings(){
 
   const [rows,setRows] = useState(initial)
   const [faculties,setFaculties] = useState(['كلية الهندسة','كلية الطب','كلية الآداب'])
-  const [research,setResearch] = useState(['بحث 1','بحث 2','بحث 3'])
+  const [research,setResearch] = useState([])
   const gridRef = useRef()
+
+  useEffect(()=>{
+    let mounted = true
+
+    fetch(`${API_BASE}/research-topics`)
+      .then(res=>{
+        if(!res.ok){
+          throw new Error('Failed to load research topics')
+        }
+        return res.json()
+      })
+      .then(data=>{
+        if(mounted){
+          setResearch(data.map(topic=>topic.topic_name))
+        }
+      })
+      .catch(error=>{
+        console.error(error)
+      })
+
+    return ()=>{
+      mounted = false
+    }
+  },[])
 
   // ================= API TOGGLE =================
 
@@ -75,9 +100,29 @@ export default function Settings(){
     if(name) setFaculties(s=>[...s,name]);
   };
 
-  const addResearch = ()=>{
-    const name=prompt('أدخل عنوان البحث:');
-    if(name) setResearch(s=>[...s,name]);
+  const addResearch = async ()=>{
+    const name = prompt('أدخل عنوان البحث:')?.trim();
+    if(!name) return;
+
+    try{
+      const response = await fetch(`${API_BASE}/research-topics`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({topic_name:name})
+      });
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error(data.message || 'فشل إضافة البحث');
+      }
+
+      setResearch(prev=>[...prev,data.topic_name]);
+      alert('تمت إضافة البحث بنجاح');
+    }catch(error){
+      alert(error.message || 'فشل إضافة البحث');
+      console.error(error);
+    }
   };
 
   // ================= PDF =================
