@@ -246,6 +246,7 @@ const resetTrainingCycle = async ()=>{
           ref={gridRef}
           rowData={rows}
           columnDefs={columnDefs}
+          enableRtl={true}
           defaultColDef={{resizable:true}}
           onCellValueChanged={()=>setRows(gridRef.current.api.getRenderedNodes().map(n=>n.data))}
         />

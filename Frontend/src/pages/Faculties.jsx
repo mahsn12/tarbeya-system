@@ -107,6 +107,7 @@ export default function Faculties(){
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
+          enableRtl={true}
           defaultColDef={{ sortable: true, filter: true, resizable: true, editable: true }}
           enableRangeSelection={true}
           animateRows={true}

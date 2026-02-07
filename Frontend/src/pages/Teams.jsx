@@ -111,6 +111,7 @@ export default function Teams(){
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
+          enableRtl={true}
           defaultColDef={{editable:true,filter:true,sortable:true,resizable:true}}
           enableRangeSelection={true}
           onCellValueChanged={async (params) => {

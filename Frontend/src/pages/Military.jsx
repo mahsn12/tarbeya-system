@@ -120,6 +120,7 @@ export default function Military(){
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
+          enableRtl={true}
           enableRangeSelection={true}
           rowSelection={'multiple'}
           onCellValueChanged={async (params)=>{

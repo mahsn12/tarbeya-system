@@ -130,6 +130,7 @@ export default function Students(){
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
+          enableRtl={true}
           enableRangeSelection={true}
           rowSelection={'multiple'}
           animateRows={true}
